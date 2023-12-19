@@ -112,7 +112,7 @@ class DefaultPreprocessor(object):
             seg = seg.astype(np.int8)
         return data, seg
 
-    def run_case(self, image_files: List[str], seg_file: Union[str, None], plans_manager: PlansManager,
+    def run_case(self, image_file: str, seg_file: Union[str, None], plans_manager: PlansManager,
                  configuration_manager: ConfigurationManager,
                  dataset_json: Union[dict, str]):
         """
@@ -127,8 +127,8 @@ class DefaultPreprocessor(object):
 
         rw = plans_manager.image_reader_writer_class()
 
-        # load image(s)
-        data, data_properties = rw.read_images(image_files)
+        # load image
+        data, data_properties = rw.read_images(image_file)
 
         # if possible, load seg
         if seg_file is not None:
@@ -140,10 +140,10 @@ class DefaultPreprocessor(object):
                                       dataset_json)
         return data, seg, data_properties
 
-    def run_case_save(self, output_filename_truncated: str, image_files: List[str], seg_file: str,
+    def run_case_save(self, output_filename_truncated: str, image_file: str, seg_file: str,
                       plans_manager: PlansManager, configuration_manager: ConfigurationManager,
                       dataset_json: Union[dict, str]):
-        data, seg, properties = self.run_case(image_files, seg_file, plans_manager, configuration_manager, dataset_json)
+        data, seg, properties = self.run_case(image_file, seg_file, plans_manager, configuration_manager, dataset_json)
         # print('dtypes', data.dtype, seg.dtype)
         np.savez_compressed(output_filename_truncated + '.npz', data=data, seg=seg)
         write_pickle(properties, output_filename_truncated + '.pkl')
